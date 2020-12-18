@@ -1,18 +1,16 @@
 {
-  "name": "text-analysis",
+  "name": "random-text-analysis",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project utilizes Compromise.js to analyze a text document, then recreate each sentence based on the parts of speech and random words from the entire document. ",
   "main": "index.js",
   "dependencies": {
     "compromise": "^13.7.0",
-    "compromise-adjectives": "0.0.5",
-    "compromise-numbers": "^1.0.0",
     "compromise-sentences": "^0.1.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Alex Taylor",
+  "license": "MIT"
 }
