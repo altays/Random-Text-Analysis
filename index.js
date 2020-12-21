@@ -1,6 +1,5 @@
 const nlp = require('compromise');
 nlp.extend(require('compromise-sentences'))
-
 const fs = require('fs');
  
 function getRandomInt(min, max) {
@@ -15,23 +14,15 @@ let nlpGeneral = function(text) {
 }
 
 let nlpSentences = function(text) {
-    //parse the text, again
     let doc = nlp(text)
-
-    // pull out adjectives
     let sentences = doc.sentences();
-
-    //print it again, as text
     return sentences
 }
 
-// search allTags array for a subarray that contains the tag
-// using that index, pull that word from the allWords array
+// search tag array for indexes that contain selected tag
 let tagSearch = function(tags, tagArray) {
     let indexArray = []
-   
     for (let index = 0; index < tagArray.length; index++) {
-        // console.log(allTags[index] + " " + allTags[index].includes('#Verb'))
         if (tagArray[index].includes(tags)) {
             indexArray.push(index)
         }
@@ -39,6 +30,7 @@ let tagSearch = function(tags, tagArray) {
     return indexArray
 }
 
+// search words at indexes
 let wordSearch = function(searchTag, wordArray, tagArray) {
     searchArray = []
     for (let tagIndex = 0; tagIndex < tagSearch(searchTag,tagArray).length; tagIndex++){
@@ -60,12 +52,6 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
 
     let sentences = nlpSentences(testText);    
     let sentencesTags = sentences.out('tags');
-    let sentencesJSON = sentences.out('json')
-
-    // get number of sentences
-    // pick a random starting index
-    // get difference between max and starting point
-    // pick a random number of lines within that range
 
     let sentenceNum = sentencesTags.length
     let randIndex = getRandomInt(0,sentenceNum-1)
@@ -93,56 +79,40 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
         }
     }
 
-    // console.log(wordSearch("#Verb", allWords, allTags)[0])
-    // consider just pulling one tag from the pulled tag list - gives more options - includes() gives false if not in the right oder
-    // iterate over array returned from wordSearch -> put the one tag in, then use randInt to pick the word
-
-    for (let index = randIndex; index < randLineNum; index++) {   
-        let posNLP = Object.values(sentencesTags[index]);
-        // console.log(posNLP)
-
+    for (let index = 0; index < randLineNum; index++) {
+        let randomSentence = getRandomInt(0,sentencesTags.length-1)
+        let posNLP = Object.values(sentencesTags[randomSentence]);
+       
         for (let i = 0; i < posNLP.length; i++) {
-            // if the value at the index is a string, or single value
-            if (typeof posNLP[i] == "string") {
+            // if there is just one tag for the word
+            if (posNLP[i].length === 1) {
 
-                // console.log(posNLP[i])
-                let match = documentNLP.match(posNLP[i]).json()
+                let match = wordSearch(posNLP[i], allWords, allTags)
                 let randomSelection = match[getRandomInt(0,match.length-1)]
 
                 if (randomSelection != undefined) {
-                    saveString+= randomSelection.text + " "
+                    saveString+= randomSelection + " "
                 }
             }
-            // if the value is an object, or has multiple values
+
+            // if there are multiple tags for the word, pick a random tag and search for words that match it
             else {
-                let subArrayStr = ""
-                let subArrayLoopRandom = getRandomInt(0, posNLP[i].length)
-
-                // pulling a random number of tags to vary specificity
-                for (let j = 0; j < subArrayLoopRandom; j++){
-                    subArrayStr += " " + posNLP[i][j]
-                }
-                //searching for all words that match tags, pulling a random word from that list
-                let match = documentNLP.match(subArrayStr).json()
+                let subArrayRandomTag = getRandomInt(0, posNLP[i].length)
+                let subArrayStr = posNLP[i][subArrayRandomTag]
+                
+                let match = wordSearch(subArrayStr, allWords, allTags)
                 let randomSelection = match[getRandomInt(0,match.length-1)]
-
+                
                 if (randomSelection != undefined) {
-                    saveString+= randomSelection.text + " "
+                    saveString+= randomSelection + " "
                 }   
             }
         }
         saveString += "\n";
     }
-
-    // fs.writeFile('message.txt', saveString, (err) => {
-    //     if (err) throw err;
-    //     console.log('The file has been saved!');
-    // });
-   
+    
+    fs.writeFile('message.txt', saveString, (err) => {
+        if (err) throw err;
+        console.log('The file has been saved!');
+    });
 });
-
-
-
-
-
-
