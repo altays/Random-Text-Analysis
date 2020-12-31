@@ -59,6 +59,8 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
 
     let allWords = []
     let allTags = []
+    // pulling out only words, contractions
+    let reg = /(\w+\'\w+)|(\w+)/gi
 
      // pulling all words, tags fo rwords, and adding to array
     for (let i = 0; i < docTags.length; i++) {
@@ -73,12 +75,15 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
             }
 
             if (allWords.includes(word) != true) {
-                allWords.push(word)
-                allTags.push(tagString.trim())
+                if ((word != "")) {
+                    allWords.push(word.match(reg)[0])
+                    allTags.push(tagString.trim())
+                }
             }
         }
     }
 
+    console.log(allWords)
     for (let index = 0; index < randLineNum; index++) {
         let randomSentence = getRandomInt(0,sentencesTags.length-1)
         let posNLP = Object.values(sentencesTags[randomSentence]);
