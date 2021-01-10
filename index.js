@@ -2,6 +2,7 @@ const nlp = require('compromise');
 nlp.extend(require('compromise-sentences'))
 const fs = require('fs');
  
+// consider converting into a module
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -43,9 +44,13 @@ let wordSearch = function(searchTag, wordArray, tagArray) {
 // reading test file
 fs.readFile('testText.txt', 'utf8', function(err, contents) {
     if (err) throw error
+    console.log("Opening text file")
+    
     let testText = contents;
 
     let saveString = ""
+    let wordString = ""
+    let posArr = []
 
     let documentNLP = nlpGeneral(testText)
     let docTags = documentNLP.out('json')
@@ -74,24 +79,40 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
                 tagString += tags[tagIndex] + " "
             }
 
-            if (allWords.includes(word) != true) {
-                if ((word != "")) {
-                    allWords.push(word.match(reg)[0])
+            if (reg.test(word)) {
+                if (allWords.toString().includes(word) != true) {
+                    regWord = word.match(reg)
+
+                    // won't need this for inserting into the database
+                    allWords.push(word.match(reg))
                     allTags.push(tagString.trim())
+                    
+                    wordString += `${regWord}: ${tagString}` + '\n'
+                    let wordObj = {}
+                    //create object, insert into database
+                    wordObj[`${regWord}`] = `${tagString}`
+                    // console.log(wordObj)
                 }
             }
+
         }
     }
 
-    console.log(allWords)
-    for (let index = 0; index < randLineNum; index++) {
-        let randomSentence = getRandomInt(0,sentencesTags.length-1)
-        let posNLP = Object.values(sentencesTags[randomSentence]);
-       
+    for (let index = 0; index < sentenceNum; index++) {
+        // let randomSentence = getRandomInt(0,sentencesTags.length-1) 
+        
+        let posNLP = Object.values(sentencesTags[index]); // set back to randomSentence for creating text docs
+        let sentenceStructure = {}
+        sentenceStructure = {"pattern":JSON.stringify(posNLP)}
+        console.log(sentenceStructure)
+
+        // need to restructure this - random number of random sentence patterns, then analyze as follows
         for (let i = 0; i < posNLP.length; i++) {
+         
             // if there is just one tag for the word
             if (posNLP[i].length === 1) {
 
+                // query database for words that contain the tag, then randomly pick a word from that object
                 let match = wordSearch(posNLP[i], allWords, allTags)
                 let randomSelection = match[getRandomInt(0,match.length-1)]
 
@@ -114,10 +135,24 @@ fs.readFile('testText.txt', 'utf8', function(err, contents) {
             }
         }
         saveString += "\n";
+        posArr.push(posNLP)        
     }
     
+    // console.log(posArr)
+
+    fs.writeFile('words-tags.txt', wordString, (err) => {
+        if (err) throw err;
+        console.log('The words-tags file has been saved!');
+    });
+
     fs.writeFile('message.txt', saveString, (err) => {
         if (err) throw err;
-        console.log('The file has been saved!');
+        console.log('The chopped up file has been saved!');
     });
+
+    fs.writeFile('pos.txt', JSON.stringify(posArr), (err) => {
+        if (err) throw err;
+        console.log('The parts of speech file has been saved!');
+    });
+
 });
