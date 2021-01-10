@@ -104,7 +104,7 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
         let posNLP = Object.values(sentencesTags[index]); // set back to randomSentence for creating text docs
         let sentenceStructure = {}
         sentenceStructure = {"pattern":JSON.stringify(posNLP)}
-        console.log(sentenceStructure)
+        // console.log(sentenceStructure)
 
         // need to restructure this - random number of random sentence patterns, then analyze as follows
         for (let i = 0; i < posNLP.length; i++) {
@@ -140,17 +140,17 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
     
     // console.log(posArr)
 
-    fs.writeFile('words-tags.txt', wordString, (err) => {
+    fs.writeFile('./words-tags.txt', wordString, (err) => {
         if (err) throw err;
         console.log('The words-tags file has been saved!');
     });
 
-    fs.writeFile('message.txt', saveString, (err) => {
+    fs.writeFile('./message.txt', saveString, (err) => {
         if (err) throw err;
         console.log('The chopped up file has been saved!');
     });
 
-    fs.writeFile('pos.txt', JSON.stringify(posArr), (err) => {
+    fs.writeFile('./pos.txt', JSON.stringify(posArr), (err) => {
         if (err) throw err;
         console.log('The parts of speech file has been saved!');
     });

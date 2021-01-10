@@ -18,17 +18,17 @@ search: #Infinitive #PresentTense #Verb
 for: #Preposition 
 quite: #Adverb 
 at: #Preposition 
-ease: #Noun #Singular 
+ease: #Noun #Acronym 
 carew: #Noun #Acronym #Organization #Singular #ProperNoun 
 murder: #Infinitive #PresentTense #Verb 
 incident: #Acronym #Noun 
-letter: #Noun #Singular 
-lanyon: #Person #ProperNoun #Singular #Noun 
-window: #Noun #Singular 
+letter: #Noun #Acronym #Organization #Singular #ProperNoun 
+lanyon: #Person #ProperNoun #Singular #Noun #Acronym 
+window: #Noun #Acronym #Organization #Singular #ProperNoun 
 last: #Adjective 
-night: #Noun #Singular 
-lanyon,s: #Noun 
-narrative: #Adjective 
+night: #Noun #Acronym 
+lanyon,s: #Noun #Possessive 
+narrative: #Acronym #Noun 
 henry: #MaleName #FirstName #Person #ProperNoun #Singular #Noun 
 jekyll,s: #Noun #Possessive #LastName #Person #ProperNoun #Singular 
 full: #Comparable #Adjective 

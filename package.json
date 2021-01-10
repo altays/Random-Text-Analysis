@@ -2,15 +2,21 @@
   "name": "random-text-analysis",
   "version": "1.0.0",
   "description": "This project utilizes Compromise.js to analyze a text document, then recreate each sentence based on the parts of speech and random words from the entire document. ",
-  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "scrape": "cd scripts && index.js"
+  },
   "dependencies": {
     "compromise": "^13.7.0",
-    "compromise-sentences": "^0.1.0"
+    "compromise-sentences": "^0.1.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "mongodb": "^3.6.3",
+    "morgan": "~1.9.1",
+    "pug": "2.0.0-beta11"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Alex Taylor",
-  "license": "MIT"
+  "author": "Alex Taylor"
 }
