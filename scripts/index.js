@@ -1,48 +1,30 @@
-const nlp = require('compromise');
-nlp.extend(require('compromise-sentences'))
+// const nlp = require('compromise');
+// nlp.extend(require('compromise-sentences'))
 const fs = require('fs');
+const MongoClient = require('mongodb').MongoClient;
+const helpFunc = require('./helperFunctions');
  
-// consider converting into a module
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
+console.log(helpFunc.getName2())
 
-let nlpGeneral = function(text) {
-    let doc = nlp(text);
-    return doc;
-}
+// Connection URL
+const url = 'mongodb://localhost:27017';
+ 
+// Database Name
+const dbName = 'test-word';
 
-let nlpSentences = function(text) {
-    let doc = nlp(text)
-    let sentences = doc.sentences();
-    return sentences
-}
-
-// search tag array for indexes that contain selected tag
-let tagSearch = function(tags, tagArray) {
-    let indexArray = []
-    for (let index = 0; index < tagArray.length; index++) {
-        if (tagArray[index].includes(tags)) {
-            indexArray.push(index)
-        }
-    }
-    return indexArray
-}
-
-// search words at indexes
-let wordSearch = function(searchTag, wordArray, tagArray) {
-    searchArray = []
-    for (let tagIndex = 0; tagIndex < tagSearch(searchTag,tagArray).length; tagIndex++){
-        newWord = wordArray[tagSearch(searchTag,tagArray)[tagIndex]]
-        searchArray.push(newWord)
-    }
-    return searchArray
-}
+// Use connect method to connect to the server
+MongoClient.connect(url,  { useUnifiedTopology: true }, function(err, client) {
+    //   assert.equal(null, err);
+    console.log("Connected successfully to server");
+    
+    const db = client.db(dbName);
+        
+    client.close();
+});
 
 // reading test file
 fs.readFile('./testText.txt', 'utf8', function(err, contents) {
+    
     if (err) throw error
     console.log("Opening text file")
     
@@ -52,15 +34,15 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
     let wordString = ""
     let posArr = []
 
-    let documentNLP = nlpGeneral(testText)
+    let documentNLP = helpFunc.nlpGeneral(testText)
     let docTags = documentNLP.out('json')
 
-    let sentences = nlpSentences(testText);    
+    let sentences = helpFunc.nlpSentences(testText);    
     let sentencesTags = sentences.out('tags');
 
     let sentenceNum = sentencesTags.length
-    let randIndex = getRandomInt(0,sentenceNum-1)
-    let randLineNum = getRandomInt(randIndex,sentenceNum)
+    let randIndex = helpFunc.getRandomInt(0,sentenceNum-1)
+    let randLineNum = helpFunc.getRandomInt(randIndex,sentenceNum)
 
     let allWords = []
     let allTags = []
@@ -113,8 +95,8 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
             if (posNLP[i].length === 1) {
 
                 // query database for words that contain the tag, then randomly pick a word from that object
-                let match = wordSearch(posNLP[i], allWords, allTags)
-                let randomSelection = match[getRandomInt(0,match.length-1)]
+                let match = helpFunc.wordSearch(posNLP[i], allWords, allTags)
+                let randomSelection = match[helpFunc.getRandomInt(0,match.length-1)]
 
                 if (randomSelection != undefined) {
                     saveString+= randomSelection + " "
@@ -123,11 +105,11 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
 
             // if there are multiple tags for the word, pick a random tag and search for words that match it
             else {
-                let subArrayRandomTag = getRandomInt(0, posNLP[i].length)
+                let subArrayRandomTag = helpFunc.getRandomInt(0, posNLP[i].length)
                 let subArrayStr = posNLP[i][subArrayRandomTag]
                 
-                let match = wordSearch(subArrayStr, allWords, allTags)
-                let randomSelection = match[getRandomInt(0,match.length-1)]
+                let match = helpFunc.wordSearch(subArrayStr, allWords, allTags)
+                let randomSelection = match[helpFunc.getRandomInt(0,match.length-1)]
                 
                 if (randomSelection != undefined) {
                     saveString+= randomSelection + " "
@@ -138,21 +120,19 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
         posArr.push(posNLP)        
     }
     
-    // console.log(posArr)
+    // fs.writeFile('./words-tags.txt', wordString, (err) => {
+    //     if (err) throw err;
+    //     console.log('The words-tags file has been saved!');
+    // });
 
-    fs.writeFile('./words-tags.txt', wordString, (err) => {
-        if (err) throw err;
-        console.log('The words-tags file has been saved!');
-    });
+    // fs.writeFile('./message.txt', saveString, (err) => {
+    //     if (err) throw err;
+    //     console.log('The chopped up file has been saved!');
+    // });
 
-    fs.writeFile('./message.txt', saveString, (err) => {
-        if (err) throw err;
-        console.log('The chopped up file has been saved!');
-    });
-
-    fs.writeFile('./pos.txt', JSON.stringify(posArr), (err) => {
-        if (err) throw err;
-        console.log('The parts of speech file has been saved!');
-    });
+    // fs.writeFile('./pos.txt', JSON.stringify(posArr), (err) => {
+    //     if (err) throw err;
+    //     console.log('The parts of speech file has been saved!');
+    // });
 
 });
