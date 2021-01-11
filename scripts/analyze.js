@@ -20,6 +20,9 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, function(err, client) {
     client.close();
 });
 
+// delete everything from the database
+
+
 // reading test file
 fs.readFile('./testText.txt', 'utf8', function(err, contents) {
     
@@ -31,7 +34,6 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
 
     let sentences = helpFunc.nlpSentences(contents);    
     let sentencesTags = sentences.out('tags');
-
     let sentenceNum = sentencesTags.length
 
     let allWords = []
@@ -63,34 +65,29 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
                     regWord = word.match(reg).toString()
                   
                     if (regWord.search(commaReg) != -1) {
-                        console.log(regWord)
                         regWord = regWord.replace(",", "'")
                         console.log(regWord)
                     }
 
-                    allWords.push(regWord.match(reg))
+                    allWords.push(regWord)
                     allTags.push(tagString.trim())
-                    
-                    let wordObj = {}
-                    //create object, insert into database // don't close yet
-                    wordObj[`${regWord}`] = `${tagString.trimEnd()}`
-                    wordObjArray.push(wordObj)
+                    helpFunc.aggreObjects(regWord,tagString.trimEnd(), wordObjArray)
                 }
             }
         }
     }
-   
+    // console.log(wordObjArray)
     for (let index = 0; index < sentenceNum; index++) {
         
         let posNLP = Object.values(sentencesTags[index]); 
-        let sentenceStructure = {}
-        sentenceStructure = {"pattern":JSON.stringify(posNLP)}
-        sentenceObjArray.push(sentenceStructure)
+        helpFunc.aggreObjects("pattern", JSON.stringify(posNLP), sentenceObjArray)
 
         // insert sentenceObjArray to raw pattern collection        
     }
     // for testing purposes, close database here
 });
+
+
 
 // cleaning database
 
