@@ -39,9 +39,18 @@ const wordSearch = (searchTag, wordArray, tagArray) => {
     return searchArray
 }
 
-// consider creating a function to create an array out of inserted objects
+// consider creating a function to create an array out of inserted objects (see lines 74-77, 85-88)
+
+const aggreObjects = (key, value, insertArr) => {
+    let tempObj = {}
+    tempObj[key] = value
+    insertArr.push(tempObj)
+    // key string
+    // value
+}
 
 exports.getRandomInt = getRandomInt;
 exports.nlpGeneral = nlpGeneral;
 exports.nlpSentences = nlpSentences;
 exports.wordSearch = wordSearch;
+exports.aggreObjects = aggreObjects;
