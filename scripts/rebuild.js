@@ -1,24 +1,19 @@
-// const nlp = require('compromise');
-// nlp.extend(require('compromise-sentences'))
 const fs = require('fs');
 const MongoClient = require('mongodb').MongoClient;
 const helpFunc = require('./helperFunctions');
+const mongoScripts = require('./mongoScripts')
  
-console.log(helpFunc.getName2())
-
 // Connection URL
 const url = 'mongodb://localhost:27017';
  
 // Database Name
-const dbName = 'test-word';
+const dbName = 'randomText';
 
 // Use connect method to connect to the server
 MongoClient.connect(url,  { useUnifiedTopology: true }, function(err, client) {
     //   assert.equal(null, err);
     console.log("Connected successfully to server");
-    
     const db = client.db(dbName);
-        
     client.close();
 });
 
@@ -73,13 +68,14 @@ fs.readFile('./testText.txt', 'utf8', function(err, contents) {
                     let wordObj = {}
                     //create object, insert into database
                     wordObj[`${regWord}`] = `${tagString}`
-                    // console.log(wordObj)
+                    // insert command here
                 }
             }
 
         }
     }
 
+    // modify
     for (let index = 0; index < sentenceNum; index++) {
         // let randomSentence = getRandomInt(0,sentencesTags.length-1) 
         

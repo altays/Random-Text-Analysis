@@ -1,13 +1,5 @@
 const nlp = require('compromise');
 nlp.extend(require('compromise-sentences'))
-
-const getName = () => {
-    return 'Jim';
-};
-
-const getName2 = () => {
-    return 'James'
-}
   
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -47,8 +39,8 @@ const wordSearch = (searchTag, wordArray, tagArray) => {
     return searchArray
 }
 
-exports.getName = getName;
-exports.getName2 = getName2;
+// consider creating a function to create an array out of inserted objects
+
 exports.getRandomInt = getRandomInt;
 exports.nlpGeneral = nlpGeneral;
 exports.nlpSentences = nlpSentences;

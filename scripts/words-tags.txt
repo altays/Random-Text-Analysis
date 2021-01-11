@@ -27,10 +27,10 @@ lanyon: #Person #ProperNoun #Singular #Noun #Acronym
 window: #Noun #Acronym #Organization #Singular #ProperNoun 
 last: #Adjective 
 night: #Noun #Acronym 
-lanyon,s: #Noun #Possessive 
+lanyon's: #Noun #Possessive 
 narrative: #Acronym #Noun 
 henry: #MaleName #FirstName #Person #ProperNoun #Singular #Noun 
-jekyll,s: #Noun #Possessive #LastName #Person #ProperNoun #Singular 
+jekyll's: #Noun #Possessive #LastName #Person #ProperNoun #Singular 
 full: #Comparable #Adjective 
 statement: #Noun #Acronym 
 utterson: #Person #ProperNoun #Singular #Noun 
@@ -119,7 +119,7 @@ help: #Infinitive #PresentTense #Verb
 rather: #Adverb 
 than: #Preposition 
 reprove: #Infinitive #PresentTense #Verb 
-cain,s: #Noun #Possessive 
+cain's: #Noun #Possessive 
 heresy: #Noun #Singular 
 used: #PastTense #Verb 
 say: #Infinitive #PresentTense #Verb 
@@ -163,7 +163,7 @@ ready: #Comparable #Adjective
 made: #PastTense #Verb 
 hands: #Noun #Plural 
 opportunity: #Singular #Noun 
-lawyer,s: #Actor #Noun #Possessive 
+lawyer's: #Actor #Noun #Possessive 
 those: #Determiner 
 blood: #Uncountable #Noun 
 known: #Verb 
