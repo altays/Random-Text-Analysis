@@ -1,20 +1,22 @@
 // mongodb module import
-// const MongoClient = require('mongodb').MongoClient
+const MongoClient = require('mongodb').MongoClient
 
 // insert documents
-const insertDocuments = function(db, callback, collectionString, data) {
+const insertDocuments =  function(dbase,collectionString, data) {
     // Get the documents in a specific collection, insert specific data
+    const db = client.db(dbase)
     const collection = db.collection(collectionString);
     collection.insertMany(data, function(err, result) {
         if (err) throw err
         console.log(result);
-        callback(result);
+        // callback(result);
     });
 }
 
 // query dbs
-const findDocuments = function(db, callback, collectionString, query) {
+const findDocuments = function(client, dbase, callback, collectionString, query) {
     // Get the documents collection
+    const db = client.db(dbase)
     const collection = db.collection(collectionString);
     // Find some documents
     collection.find(query).toArray(function(err, docs) {
@@ -26,17 +28,23 @@ const findDocuments = function(db, callback, collectionString, query) {
 }
 
 // remove documents
-const removeDocuments = function(db, callback, collectionString, query) {
-    // Get the documents collection
+const removeDocuments = function(dbase, collectionString, query) {
+    const db = client.db(dbase)
     const collection = db.collection(collectionString);
     // Delete document where a is 3
     collection.deleteMany(query, function(err, result) {
         if (err) throw err;
-        callback(result);
+        console.log("deleting entries from " + collectionString)
+        // callback(result);
     });
+}
+
+const blankCallback = () => {
+    return
 }
 
 // export
 exports.insertDocuments = insertDocuments;
 exports.findDocuments = findDocuments;
 exports.removeDocuments = removeDocuments;
+exports.blankCallback = blankCallback;
