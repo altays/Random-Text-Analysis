@@ -39,14 +39,62 @@ const wordSearch = (searchTag, wordArray, tagArray) => {
     return searchArray
 }
 
-const aggreObjects = (key, value, insertArr) => {
-    let tempObj = {}
-    tempObj[key] = value
-    insertArr.push(tempObj)
+// pulling all words and tags, processing, creating objects, and inserting objects into a larger array for insertion into db
+const wordParse = (docTags) => {
+    let wordObjArray = []
+    let allWords = []
+    let allTags = []
+
+    // pulling out only words, contractions
+    const reg = /(\w+\'\w+)|(\w+)/gi
+    const commaReg = /[\,]/g
+
+    for (let i = 0; i < docTags.length; i++) {
+        for (let j = 0; j < docTags[i].terms.length; j++) {
+            let word = docTags[i].terms[j].text.toString().toLowerCase().trim()
+            let tags = docTags[i].terms[j].tags
+            let tagString = ""
+        
+            for (let tagIndex = 0; tagIndex < tags.length; tagIndex++) {
+                tags[tagIndex] = "#"+tags[tagIndex]
+                tagString += tags[tagIndex] + " "
+            }
+
+            if (reg.test(word)) {
+                if (allWords.toString().includes(word) != true) {
+                    regWord = word.match(reg).toString()
+
+                    if (regWord.search(commaReg) != -1) {
+                        regWord = regWord.replace(",", "'")
+                    }
+
+                    allWords.push(regWord)
+                    allTags.push(tagString.trim())
+                    wordObj = {}
+                    wordObj["word"] = regWord
+                    wordObj["tags"] = tagString.trim()
+                    wordObjArray.push(wordObj)
+                }  
+            }
+        }
+    }
+    return wordObjArray
+}
+
+const sentenceParse =  (sentencesTags) => {
+    let sentenceArray = []
+    for (let index = 0; index < sentencesTags.length; index++) {            
+        let posNLP = Object.values(sentencesTags[index]); 
+        sentenceObj = {}
+        sentenceObj["pattern"] = JSON.stringify(posNLP);
+        sentenceArray.push(sentenceObj)
+    }
+    return sentenceArray
 }
 
 exports.getRandomInt = getRandomInt;
 exports.nlpGeneral = nlpGeneral;
 exports.nlpSentences = nlpSentences;
 exports.wordSearch = wordSearch;
-exports.aggreObjects = aggreObjects;
+exports.wordParse = wordParse;
+exports.sentenceParse = sentenceParse;
