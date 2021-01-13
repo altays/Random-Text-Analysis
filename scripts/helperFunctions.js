@@ -92,9 +92,36 @@ const sentenceParse =  (sentencesTags) => {
     return sentenceArray
 }
 
+const parseDbData = (doc) => {
+    let dbData = []
+    for (let i = 0; i < doc.length; i++){
+        // console.log(doc[i])
+        // let tempObj = {}
+        // tempObj["word"]=doc[i].word
+        // tempObj["tags"]=doc[i].tags
+        dbData.push(doc[i].word)
+    }
+
+    // console.log(dbData)
+    return dbData
+}
+
+const compareArrays = (dbData, rawData) => {
+    let uniqueArray = []
+    for (let i = 0; i < rawData.length; i++) {
+        // console.log(rawData[i].word)
+        if (dbData.indexOf(rawData[i].word) == -1) {
+            uniqueArray.push(rawData[i])
+        }
+    }
+    return uniqueArray
+}
+
 exports.getRandomInt = getRandomInt;
 exports.nlpGeneral = nlpGeneral;
 exports.nlpSentences = nlpSentences;
 exports.wordSearch = wordSearch;
 exports.wordParse = wordParse;
 exports.sentenceParse = sentenceParse;
+exports.parseDbData = parseDbData;
+exports.compareArrays = compareArrays;

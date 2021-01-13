@@ -1,50 +1,55 @@
 // mongodb module import
 const MongoClient = require('mongodb').MongoClient
 
-// insert documents
-const insertDocuments =  function(dbase,collectionString, data) {
-    // Get the documents in a specific collection, insert specific data
-    const db = client.db(dbase)
-    const collection = db.collection(collectionString);
-    collection.insertMany(data, function(err, result) {
-        if (err) throw err
-        console.log(result);
-        // callback(result);
-    });
-}
-
-// query dbs
-const findDocuments = function(client, dbase, callback, collectionString, query) {
+const insertDocuments = function(db, collectionName, insertArray, callback) {
     // Get the documents collection
-    const db = client.db(dbase)
-    const collection = db.collection(collectionString);
+    const collection = db.collection(collectionName);
+    // Insert some documents
+    collection.insertMany(insertArray, function(err, result) {
+        if (err) throw err;
+        callback(result);
+    });
+  }
+
+const findDocuments = function(db, query, collectionName, callback) {
+    // Get the documents collection
+    const collection = db.collection(collectionName);
     // Find some documents
     collection.find(query).toArray(function(err, docs) {
-        if (err) throw err
-        console.log("Found the following records");
-        console.log(docs);
-        callback(docs);
-    });
-}
-
-// remove documents
-const removeDocuments = function(dbase, collectionString, query) {
-    const db = client.db(dbase)
-    const collection = db.collection(collectionString);
-    // Delete document where a is 3
-    collection.deleteMany(query, function(err, result) {
         if (err) throw err;
-        console.log("deleting entries from " + collectionString)
-        // callback(result);
+        // parseDocs = JSON.parse(docs)
+        // console.log('returned docs: ' + docs);
+        callback(docs);
+        // return docs
+    });
+  }
+
+const removeDocuments = function(db, collectionName, callback ) {
+    // Get the documents collection
+    const collection = db.collection(collectionName);
+    // Delete document where a is 3
+    collection.deleteMany( function(err, result) {
+        if (err) throw err;
+        callback(result);
     });
 }
 
-const blankCallback = () => {
-    return
+const dBInsert = function(uniqueArray, collectionName, callback) {
+    if (uniqueArray.length > 0) {
+        console.log(`You have ${uniqueArray.length} new records!`)
+        collectionName.insertMany(uniqueArray, function(err, result) {
+            if (err) throw err;
+            console.log(result)
+            // callback(result);
+            callback()
+        });
+    } else {
+        console.log('You have no new records')
+    }
 }
 
 // export
 exports.insertDocuments = insertDocuments;
 exports.findDocuments = findDocuments;
-exports.removeDocuments = removeDocuments;
-exports.blankCallback = blankCallback;
+exports.removeDocument = removeDocuments;
+exports.dBInsert = dBInsert;
