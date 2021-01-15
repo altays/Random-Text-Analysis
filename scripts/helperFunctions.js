@@ -53,12 +53,6 @@ const wordParse = (docTags) => {
         for (let j = 0; j < docTags[i].terms.length; j++) {
             let word = docTags[i].terms[j].text.toString().toLowerCase().trim()
             let tags = docTags[i].terms[j].tags
-            let tagString = ""
-        
-            for (let tagIndex = 0; tagIndex < tags.length; tagIndex++) {
-                tags[tagIndex] = "#"+tags[tagIndex]
-                tagString += tags[tagIndex] + " "
-            }
 
             if (reg.test(word)) {
                 if (allWords.toString().includes(word) != true) {
@@ -69,10 +63,10 @@ const wordParse = (docTags) => {
                     }
 
                     allWords.push(regWord)
-                    allTags.push(tagString.trim())
+                    allTags.push(tags)
                     wordObj = {}
                     wordObj["word"] = regWord
-                    wordObj["tags"] = tagString.trim()
+                    wordObj["tags"] = tags 
                     wordObjArray.push(wordObj)
                 }  
             }
@@ -117,6 +111,23 @@ const compareArrays = (dbData, rawData) => {
     return uniqueArray
 }
 
+const parseDBPatterns = async (array) => {
+    let saveArray = []
+    for (let sentenceIndex = 0; sentenceIndex < patternArray.length; sentenceIndex++){
+        let sentence = array[sentenceIndex]
+        for (let wordIndex = 0; wordIndex < sentence.length; wordIndex++ ) {
+            let tagArray = sentence[wordIndex]
+            if (tagArray.length > 1) {
+                let randomTag = helpFunc.getRandomInt(0,tagArray.length);
+                saveArray.push(tagArray[randomTag])
+            } else {
+                saveArray.push(tagArray[0])
+            }
+        }
+    }
+    return saveArray;
+}
+
 exports.getRandomInt = getRandomInt;
 exports.nlpGeneral = nlpGeneral;
 exports.nlpSentences = nlpSentences;
@@ -125,3 +136,4 @@ exports.wordParse = wordParse;
 exports.sentenceParse = sentenceParse;
 exports.parseDbData = parseDbData;
 exports.compareArrays = compareArrays;
+exports.parseDBPatterns = parseDBPatterns;
