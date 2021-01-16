@@ -26,21 +26,21 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
         const db = client.db(dbName);
         const collectionPattern = db.collection(rawColPatterns);
         const collectionWord = db.collection(rawColWords)
-        const pipeline = [{ $sample: { size: sampleNum} }]
 
-        const aggCursor = collectionPattern.aggregate(pipeline)
+        const pipelinePattern = [{ $sample: { size: sampleNum} }]
+        const aggCursorPatterns = collectionPattern.aggregate(pipelinePattern)
+        // const findCursorWords = collectionWord.find({ "tags": { $in: ["Noun"] } })
+        
         let patternArray = []
-
-        await aggCursor.forEach(pattern => {
+        await aggCursorPatterns.forEach(pattern => {
             patternArray.push(JSON.parse(pattern.pattern))
         })
 
-        const parseDBPatterns = async () => {
+        const parseDBPatterns = async (array) => {
             let saveArray = []
-            // let randomTagIndex = helpFunc.getRandomInt(0, )
 
             for (let sentenceIndex = 0; sentenceIndex < patternArray.length; sentenceIndex++){
-                let sentence = patternArray[sentenceIndex]
+                let sentence = array[sentenceIndex]
                 for (let wordIndex = 0; wordIndex < sentence.length; wordIndex++ ) {
                     let tagArray = sentence[wordIndex]
                     if (tagArray.length > 1) {
@@ -54,11 +54,33 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
             return saveArray;
         }
 
-        let tagArray = await parseDBPatterns()
+        let tagArray = await parseDBPatterns(patternArray)
+        let tagSet = [...new Set(tagArray)]
 
-        await console.log(tagArray)
+        // let  tempObj = {}
 
-        client.close();
+        // let dbWords = {}
+        dbWords = await tagSearch(tagSet)
+
+        // await console.log(dbWords)
+
+        // searching database for random words that contain each tag (see the aggregate model for the initial search - just use find ,though)
+            // set search equal to a function, await it
+            // this query searches for words that contain the single tag - db.getCollection('rawWords').find({ tags: { $in: ["Noun"] } })
+            // shuffle all values, then pull 50?
+                // use the algorithm here for shuffling https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+
+            // converting tag array into an object with multiple "tag" : ["word", "word", ...] pairs, each tag being a key and array of words a val ue
+
+        // rebuild sentences
+            // loop over sentence pattern
+            // if pattern index is an array, pull a random tag. otherwise, just use the tag
+                // pull a random word from the tag / word object, add to string
+                // at end of string, add a newline
+        
+        // await console.log(tagArray)
+
+      
     }
     catch {
         console.error(err)
