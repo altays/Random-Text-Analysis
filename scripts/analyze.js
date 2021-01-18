@@ -17,10 +17,9 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
         let sentences = helpFunc.nlpSentences(contents).out('tags');    
 
         let wordArray = await helpFunc.wordParse(documentNLP)
-        // await console.log(wordArray)
-
         let sentenceArray = await helpFunc.sentenceParse(sentences)
-        // await console.log(sentenceArray)
+
+        // consider converting both mongo connect operations into one
 
         // Processing words
         MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
