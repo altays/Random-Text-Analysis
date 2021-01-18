@@ -1,7 +1,6 @@
 const fs = require('fs');
 const MongoClient = require('mongodb');
 const helpFunc = require('./helperFunctions');
-const mongoScripts = require('./mongoScripts')
 
 // Connection URL, db name
 const url = 'mongodb://localhost:27017';
@@ -9,17 +8,9 @@ const dbName = 'randomText';
 const rawColWords = 'rawWords'
 const rawColPatterns = 'rawPatterns'
 
-
-
-// for each item in pattern, search db for words that match the tags, save the array in a variable,  and pick a random one from that array
-    // add word to a string
-        // write string
-
-// Use connect method to connect to the server
 MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, client) {
     try {
-        let saveString = ""
-        
+        let queryArray = []    
         let sampleNum = 10
 
         console.log("Connected successfully to server");
@@ -29,8 +20,7 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
 
         const pipelinePattern = [{ $sample: { size: sampleNum} }]
         const aggCursorPatterns = collectionPattern.aggregate(pipelinePattern)
-        // const findCursorWords = collectionWord.find({ "tags": { $in: ["Noun"] } })
-        
+
         let patternArray = []
         await aggCursorPatterns.forEach(pattern => {
             patternArray.push(JSON.parse(pattern.pattern))
@@ -51,46 +41,60 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
                     }
                 }
             }
-            return saveArray;
+            
+            saveArray = [...new Set(saveArray)]
+
+            for (let i = 0; i < saveArray.length; i++) {
+                queryArray.push({tags:saveArray[i]})
+            }
+            return queryArray
         }
 
-        let tagArray = await parseDBPatterns(patternArray)
-        let tagSet = [...new Set(tagArray)]
-
-        // let  tempObj = {}
-
-        // let dbWords = {}
-        dbWords = await tagSearch(tagSet)
-
-        // await console.log(dbWords)
-
-        // searching database for random words that contain each tag (see the aggregate model for the initial search - just use find ,though)
-            // set search equal to a function, await it
-            // this query searches for words that contain the single tag - db.getCollection('rawWords').find({ tags: { $in: ["Noun"] } })
-            // shuffle all values, then pull 50?
-                // use the algorithm here for shuffling https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-
-            // converting tag array into an object with multiple "tag" : ["word", "word", ...] pairs, each tag being a key and array of words a val ue
-
-        // rebuild sentences
-            // loop over sentence pattern
-            // if pattern index is an array, pull a random tag. otherwise, just use the tag
-                // pull a random word from the tag / word object, add to string
-                // at end of string, add a newline
+        let query = await parseDBPatterns(patternArray)
+        const wordSearch = collectionWord.find({ $or: query})
         
-        // await console.log(tagArray)
+        const docWords = wordSearch.toArray(function (err, docs) {
+            if (err) throw err;
 
-      
+            let tempArrWords = []
+            let tempArrTags = []
+            let combinedString = ""
+            
+            docs.forEach(doc => {
+                tempArrWords.push(doc.word)
+                tempArrTags.push(doc.tags[helpFunc.getRandomInt(0,doc.tags.length)])
+            })
+
+            patternArray.forEach(pattern => {
+                combinedString += "\n"
+    
+                pattern.forEach( subpattern => {
+                    let randomWordSet = []
+                    let randomTag = subpattern[helpFunc.getRandomInt(0,subpattern.length)] 
+                    for (let i = 0; i < tempArrTags.length; i++) {
+                        if (tempArrTags[i] == randomTag) {
+                            randomWordSet.push(tempArrWords[i])
+                        }
+                    }
+   
+                    let randomWord = randomWordSet[helpFunc.getRandomInt(0, randomWordSet.length)]
+                    if (randomWord != undefined) {
+                        combinedString+= randomWord +" "
+                    }
+                        
+                })
+            })
+
+            fs.writeFile('message.txt', combinedString.trim(), (err) => {
+                if (err) throw err;
+                console.log('The parts of speech file has been saved!');
+            });
+
+            client.close()
+        })      
     }
     catch {
         console.error(err)
         client.close()
     }
 });
-
-// fs.writeFile('./message.txt', saveString, (err) => {
-//     if (err) throw err;
-//     console.log('The chopped up file has been saved!');
-// });
-
-
