@@ -31,8 +31,7 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
                 if (err) throw err;
                 let dbWords = helpFunc.parseDbData(docs);
                 let uniqueWords = helpFunc.compareArrays(dbWords, wordArray);
-                mongoScripts.dBInsert(uniqueWords, collection, () => {
-                    client.close()
+                mongoScripts.dBInsert(uniqueWords, collection, client, () => {
                 });
             });            
         });
@@ -45,10 +44,9 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
 
             collection.find({}).toArray(function (err, docs) {
                 if (err) throw err;
-                let dbWords = helpFunc.parseDbData(docs);
-                let uniqueWords = helpFunc.compareArrays(dbWords, sentenceArray);
-                mongoScripts.dBInsert(uniqueWords, collection, () => {
-                    client.close()
+                let dbPatterns = helpFunc.parseDbData(docs);
+                let uniquePatterns = helpFunc.compareArrays(dbPatterns, sentenceArray);
+                mongoScripts.dBInsert(uniquePatterns, collection, client, () => {
                 });
                
             });
@@ -57,5 +55,6 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
     }
     catch {
         console.log(err)
+        client.close()
     }
 });
