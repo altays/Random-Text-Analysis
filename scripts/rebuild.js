@@ -11,7 +11,7 @@ const rawColPatterns = 'rawPatterns'
 MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, client) {
     try {
         let queryArray = []    
-        let sampleNum = 10
+        let sampleNum = helpFunc.getRandomInt(1,20)
 
         console.log("Connected successfully to server");
         const db = client.db(dbName);
@@ -65,10 +65,14 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
                 tempArrTags.push(doc.tags[helpFunc.getRandomInt(0,doc.tags.length)])
             })
 
+            // consider selecting a random number of patterns from patternArray, then iterate over those
+
             patternArray.forEach(pattern => {
                 combinedString += "\n"
     
                 pattern.forEach( subpattern => {
+                    let randomSkip = helpFunc.getRandomInt(0,5);
+                    // console.log(randomSkip)
                     let randomWordSet = []
                     let randomTag = subpattern[helpFunc.getRandomInt(0,subpattern.length)] 
                     for (let i = 0; i < tempArrTags.length; i++) {
@@ -78,16 +82,19 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
                     }
    
                     let randomWord = randomWordSet[helpFunc.getRandomInt(0, randomWordSet.length)]
-                    if (randomWord != undefined) {
+                    if (randomSkip == 4){
+                        // console.log("skipped a word!")
+                    }
+                    else if (randomWord != undefined) {
                         combinedString+= randomWord +" "
                     }
-                        
+                 
                 })
             })
 
             fs.writeFile('message.txt', combinedString.trim(), (err) => {
                 if (err) throw err;
-                console.log('The parts of speech file has been saved!');
+                console.log('The new file has been saved!');
             });
 
             client.close()
