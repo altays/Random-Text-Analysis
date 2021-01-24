@@ -29,7 +29,7 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
 
             collection.find({}).toArray(function (err, docs) {
                 if (err) throw err;
-                let dbWords = helpFunc.parseDbData(docs);
+                let dbWords = helpFunc.cleanDbWords(docs);
                 let uniqueWords = helpFunc.compareArrays(dbWords, wordArray);
                 mongoScripts.dBInsert(uniqueWords, collection, client, () => {
                 });
@@ -44,10 +44,9 @@ fs.readFile('./testText.txt', 'utf8', async function(err, contents) {
 
             collection.find({}).toArray(function (err, docs) {
                 if (err) throw err;
-                let dbPatterns = helpFunc.parseDbData(docs);
-                let uniquePatterns = helpFunc.compareArrays(dbPatterns, sentenceArray);
-                mongoScripts.dBInsert(uniquePatterns, collection, client, () => {
-                });
+                let dbPatterns = helpFunc.cleanDbPatterns(docs);
+                let uniquePatterns = helpFunc.comparePatternArrays(dbPatterns, sentenceArray);
+                mongoScripts.dBInsert(uniquePatterns, collection, client, () => {});
                
             });
         });
