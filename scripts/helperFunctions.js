@@ -86,10 +86,20 @@ const sentenceParse =  (sentencesTags) => {
     return sentenceArray
 }
 
-const parseDbData = (doc) => {
+const cleanDbWords = (doc) => {
     let dbData = []
     for (let i = 0; i < doc.length; i++){
         dbData.push(doc[i].word)
+    }
+
+    // console.log(dbData)
+    return dbData
+}
+
+const cleanDbPatterns = (doc) => {
+    let dbData = []
+    for (let i = 0; i < doc.length; i++){
+        dbData.push(doc[i].pattern)
     }
 
     // console.log(dbData)
@@ -109,6 +119,7 @@ const compareArrays = (dbData, rawData) => {
 
 const comparePatternArrays = (dbData, rawData) => {
     let uniqueArray = []
+    console.log(dbData)
     for (let i = 0; i < rawData.length; i++) {
         if (dbData.indexOf(rawData[i].pattern) == -1) {
             uniqueArray.push(rawData[i])
@@ -160,7 +171,8 @@ exports.nlpSentences = nlpSentences;
 exports.wordSearch = wordSearch;
 exports.wordParse = wordParse;
 exports.sentenceParse = sentenceParse;
-exports.parseDbData = parseDbData;
+exports.cleanDbWords = cleanDbWords;
+exports.cleanDbPatterns = cleanDbPatterns;
 exports.compareArrays = compareArrays;
 exports.comparePatternArrays = comparePatternArrays;
 exports.parseDBPatterns = parseDBPatterns;
