@@ -91,8 +91,6 @@ const cleanDbWords = (doc) => {
     for (let i = 0; i < doc.length; i++){
         dbData.push(doc[i].word)
     }
-
-    // console.log(dbData)
     return dbData
 }
 
@@ -101,15 +99,12 @@ const cleanDbPatterns = (doc) => {
     for (let i = 0; i < doc.length; i++){
         dbData.push(doc[i].pattern)
     }
-
-    // console.log(dbData)
     return dbData
 }
 
 const compareArrays = (dbData, rawData) => {
     let uniqueArray = []
     for (let i = 0; i < rawData.length; i++) {
-        // console.log(rawData[i].word)
         if (dbData.indexOf(rawData[i].word) == -1) {
             uniqueArray.push(rawData[i])
         }
@@ -118,11 +113,16 @@ const compareArrays = (dbData, rawData) => {
 }
 
 const comparePatternArrays = (dbData, rawData) => {
-    let uniqueArray = []
-    console.log(dbData)
-    for (let i = 0; i < rawData.length; i++) {
-        if (dbData.indexOf(rawData[i].pattern) == -1) {
-            uniqueArray.push(rawData[i])
+    let uniqueArray = rawData;
+    for (let i = 0; i < uniqueArray.length; i++) {
+        for (let j = 0; j < dbData.length; j++) {
+            // throwing an error "cannot read property 'pattern" of undefined after x amount of analyzes
+            if (String(uniqueArray[i].pattern) === String(dbData[j])) {
+                let index = uniqueArray.indexOf(uniqueArray[i])
+                if (index > -1) {
+                    uniqueArray.splice(index,1)
+                }
+            }
         }
     }
     return uniqueArray
@@ -148,15 +148,11 @@ const parseDBPatterns = async (array) => {
 // array shuffle function from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 const shuffle = array => {
     var currentIndex = array.length, temporaryValue, randomIndex;
-  
-    // While there remain elements to shuffle...
+ 
     while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-  
-      // And swap it with the current element.
+ 
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
