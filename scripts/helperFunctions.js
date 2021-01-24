@@ -80,7 +80,7 @@ const sentenceParse =  (sentencesTags) => {
     for (let index = 0; index < sentencesTags.length; index++) {            
         let posNLP = Object.values(sentencesTags[index]); 
         sentenceObj = {}
-        sentenceObj["pattern"] = JSON.stringify(posNLP);
+        sentenceObj["pattern"] = posNLP;
         sentenceArray.push(sentenceObj)
     }
     return sentenceArray
@@ -101,6 +101,16 @@ const compareArrays = (dbData, rawData) => {
     for (let i = 0; i < rawData.length; i++) {
         // console.log(rawData[i].word)
         if (dbData.indexOf(rawData[i].word) == -1) {
+            uniqueArray.push(rawData[i])
+        }
+    }
+    return uniqueArray
+}
+
+const comparePatternArrays = (dbData, rawData) => {
+    let uniqueArray = []
+    for (let i = 0; i < rawData.length; i++) {
+        if (dbData.indexOf(rawData[i].pattern) == -1) {
             uniqueArray.push(rawData[i])
         }
     }
@@ -152,5 +162,6 @@ exports.wordParse = wordParse;
 exports.sentenceParse = sentenceParse;
 exports.parseDbData = parseDbData;
 exports.compareArrays = compareArrays;
+exports.comparePatternArrays = comparePatternArrays;
 exports.parseDBPatterns = parseDBPatterns;
 exports.shuffle = shuffle;
