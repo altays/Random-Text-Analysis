@@ -11,7 +11,7 @@ const rawColPatterns = 'rawPatterns'
 MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, client) {
     try {
         let queryArray = []    
-        let sampleNum = helpFunc.getRandomInt(1,20)
+        let sampleNum = helpFunc.getRandomInt(20,50)
 
         console.log("Connected successfully to server");
         const db = client.db(dbName);
@@ -23,7 +23,7 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
 
         let patternArray = []
         await aggCursorPatterns.forEach(pattern => {
-            patternArray.push(JSON.parse(pattern.pattern))
+            patternArray.push(pattern.pattern)
         })
 
         const parseDBPatterns = async (array) => {
@@ -50,7 +50,7 @@ MongoClient.connect(url,  { useUnifiedTopology: true }, async function(err, clie
             return queryArray
         }
 
-        let query = await parseDBPatterns(patternArray)
+        let query = await parseDBPatterns(helpFunc.shuffle(patternArray))
         const wordSearch = collectionWord.find({ $or: query})
         
         const docWords = wordSearch.toArray(function (err, docs) {
